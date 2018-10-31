@@ -10,10 +10,48 @@ import UIKit
 
 class MemoTableViewController: UITableViewController {
     
-    var memos = ["blue", "red", "pink"]
+    //UserDefaultsのうインスタンスを取得
+    let userDefaults = UserDefaults.standard
+    
+    //メモの内容を配列に
+    var memos = [String]()
+    
+    //segueを巻き戻した時に実行
+    @IBAction func unwindToMemoList(sender: UIStoryboardSegue) {
+        //遷移元の画面を取得したいのでMemoViewControllerで型キャスト。memoにMemoViewControllerのmemoを代入
+        guard let sourceVC = sender.source as? MemoViewController, let memo = sourceVC.memo else {
+            //うまく行かなければ抜ける
+            return
+        }
+        
+        //cellが選択されているか(編集の時は直前でcellを選択するから)
+        if let selectedIndexPath = self.tableView.indexPathForSelectedRow{
+            //値を編集する
+            self.memos[selectedIndexPath.row] = memo
+        } else {
+            //配列memoにmemoを追加
+            self.memos.append(memo)
+            
+        }
+        
+        //userDefaultsに値を書き込む
+        self.userDefaults.set(self.memos, forKey: "memos")
+        
+        //tableViewを再読み込み
+        self.tableView.reloadData()
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        //データがuserDefaultsに保存されていたら
+        if self.userDefaults.object(forKey: "memos") != nil{
+            //self.memoにself.userDefaultsから文字列の配列を引っ張ってくる
+            self.memos = self.userDefaults.stringArray(forKey: "memos")!
+        } else {
+            //初期値を設定
+            self.memos = ["memo1", "memo2", "memo3"]
+        }
 
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -26,11 +64,15 @@ class MemoTableViewController: UITableViewController {
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
+        
+        //セクションの個数を返す
         return 1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
+        
+        //配列の個数を返す
         return self.memos.count
     }
 
@@ -38,7 +80,7 @@ class MemoTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "MemoTableViewCell", for: indexPath)
 
-         //Configure the cell...
+         //cellのテキストラベルに配列の値を代入
         cell.textLabel?.text = self.memos[indexPath.row]
 
         return cell
@@ -58,17 +100,20 @@ class MemoTableViewController: UITableViewController {
     }
     */
 
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+    
+    // スワイプして行を削除する
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             // Delete the row from the data source
+            //スワイプされた行の値を配列から削除する
+            self.memos.remove(at: indexPath.row)
+            //userDefaultsに値を書き込む
+            self.userDefaults.set(self.memos, forKey: "memos")
+            //スワイプされた行をtableViewから削除
             tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
+        }
     }
-    */
+    
 
     /*
     // Override to support rearranging the table view.
@@ -85,14 +130,27 @@ class MemoTableViewController: UITableViewController {
     }
     */
 
-    /*
+    
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
+    //segueで遷移する前に呼び出される
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destination.
         // Pass the selected object to the new view controller.
+        
+        //identifierがセットされているかチェック
+        guard let identifier = segue.identifier else{
+            return
+        }
+        //identifierがeditMemoかチェック
+        if identifier == "editMemo" {
+            //遷移先のViewControllerを取得
+            let memoVC = segue.destination as! MemoViewController
+            //遷移先のVCのmemoプロパティに選択されているmemoを入れる
+            memoVC.memo = self.memos[(self.tableView.indexPathForSelectedRow?.row)!]
+        }
     }
-    */
+    
 
 }
