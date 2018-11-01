@@ -44,6 +44,15 @@ class MemoTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        //navigation barの色を変更
+        self.navigationController?.navigationBar.barTintColor = UIColor(red:127/255, green:191/255, blue:255/255, alpha:1)
+        
+        //navigation barのテキストについての設定
+        self.navigationController?.navigationBar.titleTextAttributes = [
+            // 文字の色
+            .foregroundColor: UIColor.white
+        ]
+        
         //データがuserDefaultsに保存されていたら
         if self.userDefaults.object(forKey: "memos") != nil{
             //self.memoにself.userDefaultsから文字列の配列を引っ張ってくる

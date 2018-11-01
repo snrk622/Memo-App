@@ -19,6 +19,15 @@ class MemoViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
+        //navigation barの色を変更
+        self.navigationController?.navigationBar.barTintColor = UIColor(red:127/255, green:191/255, blue:255/255, alpha:1)
+        
+        //navigation barのテキストについての設定
+        self.navigationController?.navigationBar.titleTextAttributes = [
+            // 文字の色
+            .foregroundColor: UIColor.white
+        ]
+        
         //saveButtonを無効にしておく
         self.saveButton.isEnabled = false
         
