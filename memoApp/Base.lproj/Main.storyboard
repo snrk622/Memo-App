@@ -18,15 +18,15 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="MemoTableViewCell" textLabel="DGk-LT-7di" style="IBUITableViewCellStyleDefault" id="x8C-Zn-4Lx">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="MemoTableViewCell" textLabel="DGk-LT-7di" style="IBUITableViewCellStyleDefault" id="x8C-Zn-4Lx">
                                 <rect key="frame" x="0.0" y="28" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="x8C-Zn-4Lx" id="Wsn-VW-MBH">
-                                    <rect key="frame" x="0.0" y="0.0" width="341" height="43.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="DGk-LT-7di">
-                                            <rect key="frame" x="16" y="0.0" width="324" height="43.5"/>
+                                            <rect key="frame" x="16" y="0.0" width="343" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="textColor"/>
@@ -45,12 +45,21 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Memo" id="3gi-Wi-gh8">
+                        <barButtonItem key="leftBarButtonItem" title="Edit" id="6Iw-ie-Nab">
+                            <connections>
+                                <action selector="editButton:" destination="8i0-z5-WnJ" id="Hbk-lA-KuQ"/>
+                            </connections>
+                        </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="NYB-GJ-4Op">
                             <connections>
                                 <segue destination="ycP-7h-1eC" kind="presentation" identifier="addMemo" id="Vzb-ic-Kn2"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <outlet property="addButton" destination="NYB-GJ-4Op" id="5b3-Y2-Bm3"/>
+                        <outlet property="editButtonTitle" destination="6Iw-ie-Nab" id="gUC-bH-N2x"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="u1v-xz-8Rw" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

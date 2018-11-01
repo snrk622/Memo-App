@@ -10,7 +10,7 @@ import UIKit
 
 class MemoTableViewController: UITableViewController {
     
-    //UserDefaultsのうインスタンスを取得
+    //UserDefaultsのインスタンスを取得
     let userDefaults = UserDefaults.standard
     
     //メモの内容を配列に
@@ -40,9 +40,37 @@ class MemoTableViewController: UITableViewController {
         //tableViewを再読み込み
         self.tableView.reloadData()
     }
+    
+    //移動許可
+    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    //編集許可
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    //セル移動時の配列データ処理
+    override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        let targetTitle = memos[sourceIndexPath.row]
+        if let index  = memos.index(of: targetTitle) {
+            memos.remove(at: index)
+            memos.insert(targetTitle, at: destinationIndexPath.row)
+        }
+        //userDefaultsに値を書き込む
+        self.userDefaults.set(self.memos, forKey: "memos")
+    }
+    
+        //削除アイコン表示分のスペースをインデントさせない
+        override func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
+            return false
+        }
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        //addButtonを有効にする
+        self.addButton.isEnabled = true
         
         //navigation barの色を変更
         self.navigationController?.navigationBar.barTintColor = UIColor(red:127/255, green:191/255, blue:255/255, alpha:1)
@@ -57,16 +85,8 @@ class MemoTableViewController: UITableViewController {
         if self.userDefaults.object(forKey: "memos") != nil{
             //self.memoにself.userDefaultsから文字列の配列を引っ張ってくる
             self.memos = self.userDefaults.stringArray(forKey: "memos")!
-        } else {
-            //初期値を設定
-            self.memos = ["memo1", "memo2", "memo3"]
         }
 
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
 
     // MARK: - Table view data source
@@ -95,21 +115,6 @@ class MemoTableViewController: UITableViewController {
         return cell
     }
 
-        //セクションにヘッダーをつける
-//    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-//        return "section-\(section)"
-//    }
-    
-
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
-
-    
     // スワイプして行を削除する
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
@@ -123,26 +128,6 @@ class MemoTableViewController: UITableViewController {
         }
     }
     
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
     //segueで遷移する前に呼び出される
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destination.
@@ -161,5 +146,41 @@ class MemoTableViewController: UITableViewController {
         }
     }
     
+    @IBOutlet weak var editButtonTitle: UIBarButtonItem!
+    @IBOutlet weak var addButton: UIBarButtonItem!
+    
+    //editボタンが押されたら実行
+    @IBAction func editButton(_ sender: Any) {
+        //editモードの時なら
+        if tableView.isEditing {
+            //編集を不可能に
+            tableView.isEditing = false
+            //editButtonTitleの文字を変更
+            editButtonTitle.title = "Edit"
+            //addButtonを有効にする
+            self.addButton.isEnabled = true
+        } else {
+            //編集を可能に
+            tableView.isEditing = true
+            //editButtonTitleの文字を変更
+            editButtonTitle.title = "End"
+            //addButtonを有効にする
+            self.addButton.isEnabled = false
+        }
 
+    }
+    
+    //スワイプ削除を不可能にする
+    override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        //editモードの時なら
+        if tableView.isEditing {
+            //削除を可能に
+            return .delete
+        }
+        //削除を不可能に
+        return .none
+    }
+
+    
+    
 }
